@@ -78,7 +78,6 @@ bool unpack(std::string path) {
     arc.read((char *)&path_length, sizeof(uint32_t));
 
     // get path
-
     char *buf = new char[MAX_PATH];
     arc.read(buf, path_length); // NOTICE: it's UTF-8 string.
     buf[path_length] = 0x00;    // cut off string with 0x00
@@ -91,13 +90,6 @@ bool unpack(std::string path) {
     // get size and offset
     arc.read(reinterpret_cast<char *>(&entry.offset), sizeof(uint32_t));
     arc.read(reinterpret_cast<char *>(&entry.size), sizeof(uint32_t));
-
-#ifdef _DEBUG
-    // pring filename for debugging
-    // cout << entry.path;
-    // cout << std::hex << "\t" << "Offset: 0x" << entry.offset << "\t" <<
-    // "Size: 0x" << entry.size << endl;
-#endif // _DEBUG
 
     // add to index
     index.push_back(entry);
@@ -113,17 +105,19 @@ bool unpack(std::string path) {
   cout << "FIles will oupput to: " << new_fs_prefix << endl;
 #endif // DEBUG
 
-  // compute SHA1 for XOR decrypt
-  // read header (again)
-  char *header_buf = new char[header.index_size];
-  arc.seekg(sizeof(Artemis_Header) - sizeof(uint32_t), ios::beg);
-  arc.read(header_buf, header.index_size);
-  char xor_key[20] = {0};
-  SHA1_CTX hash;
-  SHA1Init(&hash);
-  SHA1Update(&hash, (unsigned char *)header_buf, header.index_size);
-  SHA1Final((unsigned char *)xor_key, &hash);
-  delete[] header_buf;
+  char xor_key[20] = { 0 };
+  if (header.pack_version == '8') {
+      // compute SHA1 for XOR decrypt
+      // read header (again)
+      char* header_buf = new char[header.index_size];
+      arc.seekg(sizeof(Artemis_Header) - sizeof(uint32_t), ios::beg);
+      arc.read(header_buf, header.index_size);
+      SHA1_CTX hash;
+      SHA1Init(&hash);
+      SHA1Update(&hash, (unsigned char*)header_buf, header.index_size);
+      SHA1Final((unsigned char*)xor_key, &hash);
+      delete[] header_buf;
+   }
 
 #ifdef _WIN32
   uint32_t counter = 0;
@@ -165,7 +159,9 @@ bool unpack(std::string path) {
         arc.seekg(file.offset, ios::beg); // seek to offset
         arc.read((char *)buf, file.size);
         // decrypt
-        xorcrypt((char *)buf, file.size, xor_key, 20);
+        if (header.pack_version == '8') {
+            xorcrypt((char*)buf, file.size, xor_key, 20);
+        }
         // write back
         handle.write((char *)buf, file.size);
         delete[] buf;
