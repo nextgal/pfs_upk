@@ -32,7 +32,11 @@ const char ARCHIVE_MAGIC[] = {0x70, 0x66};
 const char ARCHIVE_MAGIC_SIZE = sizeof(ARCHIVE_MAGIC);
 
 struct Artemis_Entry {
+#ifdef _WIN32
   std::wstring local_path;
+#else
+  std::string local_path;
+#endif // _WIN32
   std::string path;
   char *position;
   uint32_t offset;
