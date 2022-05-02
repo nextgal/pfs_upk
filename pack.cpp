@@ -42,7 +42,7 @@ bool pack(std::string path) {
 #else
       string ir_path = entry.path().u8string();
       size_t pos = ir_path.find(fs_path.u8string());
-      ir_path.erase(pos, fs_path.string().size()); // + "\"
+      ir_path.erase(pos, fs_path.string().size() + 1); // + "\"
 #endif // _WIN32
       string vfs_path =
           filesystem::path(std::filesystem::path(ir_path)).u8string();
