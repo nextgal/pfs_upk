@@ -35,12 +35,14 @@ bool pack(std::string path) {
     // construct list
     if (entry.is_directory() != true) {
       // get VFS path
+#ifdef _WIN32
       wstring ir_path = entry.path().wstring();
       size_t pos = ir_path.find(fs_path.wstring());
-#ifdef _WIN32
       ir_path.erase(pos, fs_path.wstring().size() + 1); // + "\"
 #else
-      ir_path.erase(pos, fs_path.string().size()); // + "\"
+      string ir_path = entry.path().u8string();
+      size_t pos = ir_path.find(fs_path.u8string());
+      ir_path.erase(pos, fs_path.string().size() + 1); // + "\"
 #endif // _WIN32
       string vfs_path =
           filesystem::path(std::filesystem::path(ir_path)).u8string();
@@ -52,7 +54,11 @@ bool pack(std::string path) {
       Artemis_Entry artemis_entry;
       artemis_entry.size = (uint32_t)filesystem::file_size(entry);
       artemis_entry.path = vfs_path;
+#ifdef _WIN32
       artemis_entry.local_path = entry.path().generic_wstring();
+#else
+      artemis_entry.local_path = entry.path().generic_u8string();
+#endif // _WIN32
 
       index.push_back(artemis_entry);
 
