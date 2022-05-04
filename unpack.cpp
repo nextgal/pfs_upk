@@ -131,12 +131,16 @@ bool unpack(std::string path) {
       continue;
     } else {
       // create folders when not exist
+#ifdef _WIN32
       filesystem::path vfs_subfix = filesystem::u8path(file.path);
+#else
+      filesystem::path vfs_subfix = filesystem::path(file.path);
+#endif
       filesystem::path newpath = new_fs_prefix;
 #ifndef _WIN32
       string vfs_subfix_posix = vfs_subfix.string();
       std::replace(vfs_subfix_posix.begin(), vfs_subfix_posix.end(), '\\', '/');
-      newpath /= filesystem::u8path(vfs_subfix_posix);
+      newpath /= filesystem::path(vfs_subfix_posix);
 #else
       newpath /= vfs_subfix;
 #endif
