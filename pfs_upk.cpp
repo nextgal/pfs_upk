@@ -13,7 +13,6 @@ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 pfs_upk. If not, see <https://www.gnu.org/licenses/>.
 */
-#define _TESTMODE
 
 #include <filesystem>
 #include <fstream>
@@ -44,8 +43,9 @@ int main(int argc, char *argv[]) {
 
       exit(EXIT_SUCCESS);
     }
-#endif
+#else
     argv[1] = "C:\\vn_temp\\保\\pfs";
+#endif
     // check is path or file
     filesystem::path path;
     try {
