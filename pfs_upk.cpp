@@ -13,6 +13,7 @@ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 pfs_upk. If not, see <https://www.gnu.org/licenses/>.
 */
+#define _TESTMODE
 
 #include <filesystem>
 #include <fstream>
@@ -30,7 +31,7 @@ int main(int argc, char *argv[]) {
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
 #endif // _WIN32
-
+#ifndef _TESTMODE
     // check params
     if (argc < 2) {
       cout << "Artemis C++ Packer ---- A Simple C++ Artemis Engine Archive "
@@ -43,7 +44,8 @@ int main(int argc, char *argv[]) {
 
       exit(EXIT_SUCCESS);
     }
-
+#endif
+    argv[1] = "C:\\vn_temp\\保\\pfs";
     // check is path or file
     filesystem::path path;
     try {
