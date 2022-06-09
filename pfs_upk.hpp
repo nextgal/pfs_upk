@@ -51,8 +51,8 @@ struct Artemis_Header {
   uint32_t file_count;
 };
 
-bool pack(std::string path);
-bool unpack(std::string path);
+bool pack(const std::string& path);
+bool unpack(const std::string& path);
 bool xorcrypt(char *text, uint32_t text_length, char *key, uint32_t key_length);
 
 extern "C" {

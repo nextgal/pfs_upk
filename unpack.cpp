@@ -25,7 +25,7 @@ pfs_upk. If not, see <https://www.gnu.org/licenses/>.
 
 using namespace std;
 
-bool unpack(std::string path) {
+bool unpack(const std::string& path) {
   Artemis_Header header;
 
   ifstream arc(path, ios::in | ios::binary);

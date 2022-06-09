@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
 #endif // _WIN32
-
+#ifndef _TESTMODE
     // check params
     if (argc < 2) {
       cout << "Artemis C++ Packer ---- A Simple C++ Artemis Engine Archive "
@@ -43,7 +43,9 @@ int main(int argc, char *argv[]) {
 
       exit(EXIT_SUCCESS);
     }
-
+#else
+    argv[1] = "C:\\vn_temp\\保\\pfs";
+#endif
     // check is path or file
     filesystem::path path;
     try {
