@@ -1,4 +1,4 @@
-# pfs_upk ---- A Artemis Engine archive (un)packer
+# pfs_upk ---- An Artemis Engine archive (un)packer
 ## HOW to use
 `pfs_upk <FILENAME.pfs>` for unpack.
 
