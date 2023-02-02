@@ -1,6 +1,7 @@
 #include<vector>
 #include<memory>
 #include"MemoryStream.h"
+#include<cstring>
 
 using namespace std;
 
