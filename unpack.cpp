@@ -15,7 +15,6 @@ pfs_upk. If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <algorithm>
-#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -25,10 +24,10 @@ pfs_upk. If not, see <https://www.gnu.org/licenses/>.
 
 using namespace std;
 
-bool unpack(const std::string& path) {
+bool unpack(const filesystem::path& path) {
   Artemis_Header header;
 
-  ifstream arc(path, ios::in | ios::binary);
+  ifstream arc(puString(path), ios::in | ios::binary);
   arc.read((char *)&header, sizeof(header));
 
   // check if a vaild Artemis archive
@@ -132,7 +131,7 @@ bool unpack(const std::string& path) {
     } else {
       // create folders when not exist
 #ifdef _WIN32
-      filesystem::path vfs_subfix = filesystem::u8path(file.path);
+      filesystem::path vfs_subfix = filesystem::path(AnsiToUnicode(file.path, CP_UTF8));
 #else
       filesystem::path vfs_subfix = filesystem::path(file.path);
 #endif

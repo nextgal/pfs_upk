@@ -14,7 +14,6 @@ You should have received a copy of the GNU General Public License along with
 pfs_upk. If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -25,7 +24,7 @@ pfs_upk. If not, see <https://www.gnu.org/licenses/>.
 
 using namespace std;
 
-bool pack(const std::string& path) {
+bool pack(const filesystem::path& path) {
 	const filesystem::path fs_path = path;
 	vector<Artemis_Entry> index;
 	Artemis_Header header;
@@ -36,30 +35,29 @@ bool pack(const std::string& path) {
 		// construct list
 		if (entry.is_directory() != true) {
 			// get VFS path
-#ifdef _WIN32
-			wstring ir_path = entry.path().wstring();
-			size_t pos = ir_path.find(fs_path.wstring());
+			puString ir_path = puString(entry.path());
+			size_t pos = ir_path.find(puString(fs_path));
 			ir_path.erase(pos, fs_path.wstring().size() + 1); // + "\"
-#else
-			string ir_path = entry.path().u8string();
-			size_t pos = ir_path.find(fs_path.u8string());
-			ir_path.erase(pos, fs_path.string().size() + 1); // + "\"
-#endif // _WIN32
-			string vfs_path =
-				filesystem::path(std::filesystem::path(ir_path)).u8string();
+			puString vfs_path =
+				puString(filesystem::path(std::filesystem::path(ir_path)));
 #ifdef _DEBUG
+#ifdef _WIN32
+			wcout << L"vfs_path: " << vfs_path << endl;
+#else
 			cout << "vfs_path: " << vfs_path << endl;
+#endif // _WIN32
+
 #endif // _DEBUG
 
 			// get info
 			Artemis_Entry artemis_entry;
 			artemis_entry.size = (uint32_t)filesystem::file_size(entry);
-			artemis_entry.path = vfs_path;
 #ifdef _WIN32
-			artemis_entry.local_path = entry.path().generic_wstring();
+			artemis_entry.path = UnicodeToAnsi(vfs_path, CP_UTF8);
 #else
-			artemis_entry.local_path = entry.path().generic_u8string();
+			artemis_entry.path = vfs_path;
 #endif // _WIN32
+			artemis_entry.local_path = puString(entry.path());
 
 			index.push_back(artemis_entry);
 

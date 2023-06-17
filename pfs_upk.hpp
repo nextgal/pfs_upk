@@ -22,6 +22,13 @@ pfs_upk. If not, see <https://www.gnu.org/licenses/>.
 #define _CRT_SECURE_NO_WARNINGS
 #include <Windows.h>
 #endif
+#include <filesystem>
+
+#ifdef _WIN32
+using puString = std::wstring;
+#else
+using puString = std::string;
+#endif // _WIN32
 
 #ifndef _WIN32
 typedef char BYTE;
@@ -32,11 +39,8 @@ const char ARCHIVE_MAGIC[] = {0x70, 0x66};
 const char ARCHIVE_MAGIC_SIZE = sizeof(ARCHIVE_MAGIC);
 
 struct Artemis_Entry {
-#ifdef _WIN32
-  std::wstring local_path;
-#else
-  std::string local_path;
-#endif // _WIN32
+  puString local_path;
+  // UTF-8 encoded path
   std::string path;
   char *position;
   uint32_t offset;
@@ -51,8 +55,8 @@ struct Artemis_Header {
   uint32_t file_count;
 };
 
-bool pack(const std::string& path);
-bool unpack(const std::string& path);
+bool pack(const std::filesystem::path& path);
+bool unpack(const std::filesystem::path& path);
 bool xorcrypt(char *text, uint32_t text_length, char *key, uint32_t key_length);
 
 extern "C" {
@@ -74,3 +78,6 @@ void SHA1Final(unsigned char digest[20], SHA1_CTX *context);
 
 void SHA1(char *hash_out, const char *str, int len);
 }
+
+std::string UnicodeToAnsi(const std::wstring& source, int codePage);
+std::wstring AnsiToUnicode(const std::string& source, int codePage);
